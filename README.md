@@ -1,0 +1,4 @@
+pipenv
+python3
+Flask
+requests
