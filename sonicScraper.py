@@ -10,7 +10,7 @@ redirect_uri = spotifyEnvironment.redirect_uri
 
 
 
-scope = 'user-library-read'
+scope = 'user-library-read playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public app-remote-control'
 username = 'set your name' 
 
 #internally initiates OAuth 2.0 authorizatoin flow and retrieves necessary access token
@@ -39,8 +39,33 @@ def getLikedSongs():
     with open('songs.json', 'w') as fp:
         json.dump(songs, fp)
 
+def getCatefories():
+    genres = {}
+    holder = []
+    if token:
+        try:
+            sp = spotipy.Spotify(auth=token)
+            categories_response = sp.categories()
+            categories = categories_response['categories']['items']
+            sumCategories = len(categories)
+            for i in range(sumCategories):
+                genre_response = sp.categories(offset=i, limit=1)
+                genre = genre_response['categories']['items'][0]
+                if genre['name'] not in genres:
+                    genres[genre['name']] = []
+                genres[genre['name']].append(genre['id'])
+                # holder.append(genre['name'])
 
+            #dump to json
+            with open('genres.json', 'w') as fp:
+                json.dump(genres, fp)
+
+            return categories
+        except Exception as e:
+            print(f"Error: {e}")
+            return None
 
 if __name__ == "__main__":
 
-    getLikedSongs()
+    #getLikedSongs()
+    getCatefories()
