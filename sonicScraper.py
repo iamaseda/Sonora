@@ -71,7 +71,7 @@ def getLikedSongs():
         json.dump(songs, fp)
 
 
-def getCategories():
+async def getCategories(token):
     genres = {}
     holder = []
     i=0
@@ -98,27 +98,20 @@ def getCategories():
                     artist_id = track_artist['id']
                     print("\nTrack artist id found: ", artist_id)
                     
-                    # Spotify API endpoint to get artist information
-                    endpoint = f'https://api.spotify.com/v1/artists/{artist_id}'
-                        # Set up headers with the access token
-                    headers = {
-                        'Authorization': f'Bearer {token}',
-                    }
-                    get_artist_response = requests.get(endpoint, headers=headers)
+                    # # Spotify API endpoint to get artist information
+                    # endpoint = f'https://api.spotify.com/v1/artists/{artist_id}'
+                    #     # Set up headers with the access token
+                    # headers = {
+                    #     'Authorization': f'Bearer {token}',
+                    # }
+                    
 
-                    if get_artist_response.status_code == 429:
-                        # Rate limit exceeded, wait for some specified duration
-                        retry_after = int(get_artist_response.headers['Retry-After'])
-                        print(f"Rate limited. Waiting for {retry_after} seconds.")
-                        time.sleep(retry_after)
-
-                    if get_artist_response.status_code == 200:
-                        artist = get_artist_response.json
-
+                    artist = await get_artist_info_async(song, token)
+                    if artist:
                     # artist = sp.artist(artist_id)
                         print("\nTrack artist object found: \n", artist)
                     else:
-                        print(f"Error: {get_artist_response.status_code}, {get_artist_response.text}")
+                        print(f"Error: the asynchronous function was unable to get anything.")
                     # j += 1
                     # print("\nArtist ",j," : ", artist)
                     # time.sleep(1)
@@ -131,8 +124,37 @@ def getCategories():
             print(f"Error: {e}")
             return None
         
+async def get_artist_info_async(track, token):
+    track_artist = track['track']['artists'][0]
+    artist_id = track_artist['id']
+    artist_name = track_artist['name']
+
+    # Spotify API endpoint to get artist information
+    endpoint = f'https://api.spotify.com/v1/artists/{artist_id}'
+
+    # Set up headers with the access token
+    headers = {
+        'Authorization': f'Bearer {token}',
+    }
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(endpoint, headers=headers)
+
+        if response.status_code == 429:
+            retry_after = int(response.headers['Retry-After'])
+            remaining_time = min(retry_after, 600)  # Cap the wait time at 600 seconds
+            print(f"Rate limited for {artist_name}. Waiting for {remaining_time} seconds.")
+            await asyncio.sleep(remaining_time)
+            return None  # Skip to the next iteration after waiting
+
+        if response.status_code == 200:
+            return response.json()
+
+
 
 if __name__ == "__main__":
 
     # getLikedSongs()
-    getCategories()
+    # getCategories()
+    # Call the function within the asynchronous event loop
+    asyncio.run(getCategories(token))
