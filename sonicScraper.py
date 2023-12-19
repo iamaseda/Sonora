@@ -2,7 +2,10 @@ import json
 import spotifyEnvironment
 import spotipy.util as util
 import spotipy
+import requests
 import time
+import asyncio
+import httpx
 import re
 
 client_id = spotifyEnvironment.client_id
@@ -84,27 +87,50 @@ def getCategories():
                 i += 50
                 print("\nStarting For loop. Size of results is \n", results['total'] - i)
                 for song in results['items']:
+                    print("--------------------------------------------------------------")
                     print("\nSong found: ", song['track']['name'])
                     track_id = song['track']['id']
                     print("\nTrack ID found: ", track_id)
+                    track_artist = song['track']['artists'][0]
+                    print("\nTrack artist simplified object found: ", track_artist)
+                    artist_name = track_artist['name']
+                    print("\nTrack artist name found: ", artist_name)
+                    artist_id = track_artist['id']
+                    print("\nTrack artist id found: ", artist_id)
                     
-                    # track = sp.track(track_id)
-                    # print("\nTrack found")
-                    # artist = track['artists'][0]
-                    # #artist = sp.artist(track_id)
+                    # Spotify API endpoint to get artist information
+                    endpoint = f'https://api.spotify.com/v1/artists/{artist_id}'
+                        # Set up headers with the access token
+                    headers = {
+                        'Authorization': f'Bearer {token}',
+                    }
+                    get_artist_response = requests.get(endpoint, headers=headers)
 
+                    if get_artist_response.status_code == 429:
+                        # Rate limit exceeded, wait for some specified duration
+                        retry_after = int(get_artist_response.headers['Retry-After'])
+                        print(f"Rate limited. Waiting for {retry_after} seconds.")
+                        time.sleep(retry_after)
+
+                    if get_artist_response.status_code == 200:
+                        artist = get_artist_response.json
+
+                    # artist = sp.artist(artist_id)
+                        print("\nTrack artist object found: \n", artist)
+                    else:
+                        print(f"Error: {get_artist_response.status_code}, {get_artist_response.text}")
                     # j += 1
                     # print("\nArtist ",j," : ", artist)
                     # time.sleep(1)
+
             # #dump to json
             # with open('genres.json', 'w') as fp:
             #     json.dump(artist, fp)
 
-            
-
         except Exception as e:
             print(f"Error: {e}")
             return None
+        
 
 if __name__ == "__main__":
 
