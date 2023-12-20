@@ -72,7 +72,7 @@ def getLikedSongs():
 def getCategories():
     genres = {}
     allGenres = set()
-    holder = []
+    holder = str()
     i=0
     j=0
     if token:
@@ -82,63 +82,77 @@ def getCategories():
             size = liked_songs['total']
             print("Starting while loop\n")
             while i < size:
+                start_time = time.time()
                 results = sp.current_user_saved_tracks(offset=i, limit=50)
                 i += 50
+                k = 0
                 print("\nStarting For loop. Size of results is \n", results['total'] - i)
+                # for songs in results['items']
                 for song in results['items']:
                     print("--------------------------------------------------------------")
-                    track_name = song['track']['name']
+                    track = song['track']
+                    track_name = track['name']
                     print("\nSong found: ", track_name)
-                    track_id = song['track']['id']
+                    track_id = track['id']
                     print("\nTrack ID found: ", track_id)
-                    track_artist = song['track']['artists'][0]
+                    track_artist = track['artists'][0]
                     print("\nTrack artist simplified object found: ", track_artist)
                     artist_name = track_artist['name']
                     print("\nTrack artist name found: ", artist_name)
                     artist_id = track_artist['id']
                     print("\nTrack artist id found: ", artist_id)
-                    
-                    # Spotify API endpoint to get artist information
-                    endpoint = f'https://api.spotify.com/v1/artists/{artist_id}'
-                        # Set up headers with the access token
-                    headers = {
-                        'Authorization': f'Bearer {token}',
-                    }
-                    get_artist_response = requests.get(endpoint, headers=headers)
+                    holder = holder + artist_id + " "
+                    k += 1
+                    if k == 50:
+                        holder = holder[:-1]
+                        ids = holder.split(" ")
+                        # Spotify API endpoint to get artist information
+                        # endpoint = f'https://api.spotify.com/v1/artists/{artist_id}'
+                        endpoint = f'https://api.spotify.com/v1/artists?ids={ids}'
+                            # Set up headers with the access token
+                        headers = {
+                            'Authorization': f'Bearer {token}',
+                        }
+                        get_artist_response = requests.get(endpoint, headers=headers)
 
-                    if get_artist_response.status_code == 429:
-                        # #dump to json
-                        with open('genres.json', 'w') as fp:
-                            json.dump(genres, fp)
+                        if get_artist_response.status_code == 429:
+                            # #dump to json
+                            with open('genres.json', 'w') as fp:
+                                json.dump(genres, fp)
 
-                        with open('allgenres.json', 'w') as fp:
-                            json.dump(list(allGenres), fp)
-                        # Rate limit exceeded, wait for some specified duration
-                        retry_after = int(get_artist_response.headers['Retry-After'])
-                        print(f"Rate limited. Waiting for {retry_after} seconds.")
-                        time.sleep(retry_after)
+                            with open('allgenres.json', 'w') as fp:
+                                json.dump(list(allGenres), fp)
+                            # Rate limit exceeded, wait for some specified duration
+                            retry_after = int(get_artist_response.headers['Retry-After'])
+                            print(f"Rate limited. Waiting for {retry_after} seconds.")
+                            time.sleep(retry_after)
 
-                    if get_artist_response.status_code == 200:
-                        artist = get_artist_response.json()
+                        if get_artist_response.status_code == 200:
+                            artist = get_artist_response.json()
 
-                    # artist = sp.artist(artist_id)
-                        print("\nTrack artist object found \n")
+                        # artist = sp.artist(artist_id)
+                            print("\nTrack artist object found \n")
 
-                        artist_genres = artist['genres']
-                        print("\nTrack Artist Genres Found: \n", artist_genres)
+                            artist_genres = artist['genres']
+                            print("\nTrack Artist Genres Found: \n", artist_genres)
 
-                        if track_name not in genres:
-                            genres[track_name] = []
-                        genres[track_name] = artist_genres
+                            if track_name not in genres:
+                                genres[track_name] = []
+                            genres[track_name] = artist_genres
 
-                        for genre in artist_genres:
-                            allGenres.add(genre)
+                            for genre in artist_genres:
+                                allGenres.add(genre)
 
-                    else:
-                        print(f"Error: {get_artist_response.status_code}, {get_artist_response.text}")
+                        else:
+                            print(f"Error: {get_artist_response.status_code}, {get_artist_response.text}")
                     j += 1
                     print("\nTrack #",j)
-                    # time.sleep(1)
+                    end_time = time.time()
+                    elapsed_time = end_time - start_time
+                    iterations_per_second = len(results['items'][i-1]) / elapsed_time
+
+                    print(f"Iterations per second: {iterations_per_second}")
+                    time.sleep(1/3)
 
             # #dump to json
             with open('genres.json', 'w') as fp:
