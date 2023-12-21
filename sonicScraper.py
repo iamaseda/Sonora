@@ -4,7 +4,13 @@ import spotipy.util as util
 import spotipy
 import requests
 import time
-import re
+import logout
+import secrets
+import hashlib
+import base64
+import webbrowser
+import string
+import asyncio
 
 client_id = spotifyEnvironment.client_id
 client_secret = spotifyEnvironment.client_secret
@@ -13,16 +19,72 @@ redirect_uri = spotifyEnvironment.redirect_uri
 
 
 scope = 'user-library-read playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public app-remote-control'
-username = 'set your name' 
+username = 'set your name'
+state = secrets.token_urlsafe(16)
 
-#internally initiates OAuth 2.0 authorizatoin flow and retrieves necessary access token
-token = util.prompt_for_user_token(username,
-                                   scope,
-                                   client_id=client_id,
-                                   client_secret=client_secret,
-                                   redirect_uri=redirect_uri)
+def generate_random_string(length):
+    possible_chars = string.ascii_letters + string.digits
+    values = [secrets.choice(possible_chars) for _ in range(length)]
+    return ''.join(values)
 
-def getLikedSongs():
+code_verifier = generate_random_string(64)
+
+async def sha256(plain):
+    encoder = plain.encode('utf-8')
+    hashed = hashlib.sha256(encoder).digest()
+    return hashed
+
+async def shahash():
+    # Use run_in_executor to run the synchronous function in a separate thread
+    loop = asyncio.get_event_loop()
+    hashed = await loop.run_in_executor(None, sha256, code_verifier)
+    return hashed
+
+async def base64encode(input_bytes):
+    base64_encoded = base64.b64encode(input_bytes)
+    return base64_encoded.decode('utf-8').replace('=', '').replace('+', '-').replace('/', '_')
+
+# Perform Base64 encoding with URL-safe modifications
+code_challenge_method = 'S256'
+def login(code_challenge, show_dialog=False):
+    #internally initiates OAuth 2.0 authorizatoin flow and retrieves necessary access token
+    # token = util.prompt_for_user_token(username,
+    #                                 scope,
+    #                                 client_id=client_id,
+    #                                 client_secret=client_secret,
+    #                                 redirect_uri=redirect_uri,
+    #                                 show_dialog=True)
+    url = 'https://accounts.spotify.com/authorize'
+    url += '?response_type=token'
+    url += '&client_id=' + requests.utils.quote(client_id)
+    url += '&scope=' + requests.utils.quote(scope)
+    url += '&redirect_uri=' + requests.utils.quote(redirect_uri)
+    url += '&state=' + requests.utils.quote(state)
+    url += '&show_dialog=' + requests.utils.quote(show_dialog)
+    url += '&code_challenge_method=' + requests.utils.quote(code_challenge_method)
+    url += '&code_challenge=' + requests.utils.quote(code_challenge)
+
+    token = webbrowser.open(url)
+
+    return token
+
+async def main():
+    hashed = await shahash()
+    code_challenge = await base64encode(hashed)
+    login_token = await login(code_challenge, show_dialog=True)
+    return login_token
+
+token = None
+
+async def run():
+    result = await main()
+    token = result
+    return token
+
+
+
+
+def getLikedSongs(token):
     #get songs from Liked Songs
     songs = {}
     genres = {}
@@ -69,7 +131,7 @@ def getLikedSongs():
         json.dump(songs, fp)
 
 
-def getCategories():
+def getCategories(token):
     genres = {}
     allGenres = set()
     holder = str()
@@ -88,6 +150,8 @@ def getCategories():
                 k = 0
                 print("\nStarting For loop. Size of results is \n", results['total'] - i)
                 # for songs in results['items']
+                print("Total number of things in RESULTS: ", len(results['items']))
+                tracks = []
                 for song in results['items']:
                     print("--------------------------------------------------------------")
                     track = song['track']
@@ -95,6 +159,7 @@ def getCategories():
                     print("\nSong found: ", track_name)
                     track_id = track['id']
                     print("\nTrack ID found: ", track_id)
+                    tracks.append(track_id)
                     track_artist = track['artists'][0]
                     print("\nTrack artist simplified object found: ", track_artist)
                     artist_name = track_artist['name']
@@ -103,9 +168,10 @@ def getCategories():
                     print("\nTrack artist id found: ", artist_id)
                     holder = holder + artist_id + " "
                     k += 1
-                    if k == 50:
+                    if k == 50 or song == results['items'][-1]:
                         holder = holder[:-1]
-                        ids = holder.split(" ")
+                        idsInter = holder.split(" ")
+                        ids = ",".join(idsInter)
                         # Spotify API endpoint to get artist information
                         # endpoint = f'https://api.spotify.com/v1/artists/{artist_id}'
                         endpoint = f'https://api.spotify.com/v1/artists?ids={ids}'
@@ -128,32 +194,41 @@ def getCategories():
                             time.sleep(retry_after)
 
                         if get_artist_response.status_code == 200:
-                            artist = get_artist_response.json()
-
+                            artists = get_artist_response.json()
+                            print("\nArtists: \n", artists, "\n")
+                            groupList = []
+                            print("\nArtists Enumerated: \n", list(enumerate(artists['artists'])), "\n")
+                            for index, artist in list(enumerate(artists['artists'])):
+                                groupList.append((index, artist)) 
                         # artist = sp.artist(artist_id)
                             print("\nTrack artist object found \n")
+                            print("Group List: ", groupList)
+                            for item in groupList:
+                                print("Index: ", item[0])
+                                artist_genres = item[1] ['genres']
+                                print("\nTrack Artist Genres Found: \n", artist_genres)
 
-                            artist_genres = artist['genres']
-                            print("\nTrack Artist Genres Found: \n", artist_genres)
+                                if tracks[item[0]] not in genres:
+                                    genres[track_id] = []
+                                genres[track_id] = track_name, artist_genres
 
-                            if track_name not in genres:
-                                genres[track_name] = []
-                            genres[track_name] = artist_genres
-
-                            for genre in artist_genres:
-                                allGenres.add(genre)
+                                for genre in artist_genres:
+                                    allGenres.add(genre)
 
                         else:
                             print(f"Error: {get_artist_response.status_code}, {get_artist_response.text}")
+                        tracks = []
+                        k=0
                     j += 1
                     print("\nTrack #",j)
                     end_time = time.time()
                     elapsed_time = end_time - start_time
-                    iterations_per_second = len(results['items'][i-1]) / elapsed_time
+                    iterations_per_second = len(results['items']) / elapsed_time
 
                     print(f"Iterations per second: {iterations_per_second}")
                     time.sleep(1/3)
-
+            
+            
             # #dump to json
             with open('genres.json', 'w') as fp:
                 json.dump(genres, fp)
@@ -166,7 +241,8 @@ def getCategories():
             return None
         
 
+
 if __name__ == "__main__":
 
-    # getLikedSongs()
-    getCategories()
+    # getLikedSongs(login())
+    getCategories(logout.logout())
