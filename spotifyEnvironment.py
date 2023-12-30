@@ -2,7 +2,7 @@ import os
 
 os.environ['SPOTIPY_CLIENT_ID'] = '6a6f0739de4345f6ab1abb31eae509c9'
 os.environ['SPOTIPY_CLIENT_SECRET'] = '10d5a4ab905540b89f6a77cd031c029a'
-os.environ['SPOTIPY_REDIRECT_URI'] = 'http://localhost:8888/callback'
+os.environ['SPOTIPY_REDIRECT_URI'] = 'http://127.0.0.1:5000/callback'
 
 # Use the environment variables to provide client ID, client secret, and redirect URI
 client_id = os.environ.get('SPOTIPY_CLIENT_ID')

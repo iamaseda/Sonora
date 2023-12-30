@@ -4,7 +4,7 @@ import spotipy.util as util
 import spotipy
 import requests
 import time
-import logout
+import sonoraTest.logout as logout
 import secrets
 from spotipy.oauth2 import SpotifyOAuth
 
