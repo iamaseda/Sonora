@@ -1,11 +1,11 @@
 import requests
 import urllib.parse
-import spotifyEnvironment
+import spotifyEnvironment as spotifyEnvironment
 import spotipy
 import json
 
 from datetime import datetime, timedelta
-from flask import Flask, redirect, request, jsonify, session
+from flask import Flask, redirect, request, jsonify, session, Blueprint, render_template
 
 
 app = Flask(__name__)
@@ -22,7 +22,12 @@ API_BASE_URL = 'https://api.spotify.com/v1/'
 
 @app.route('/')
 def index():
-    return "Welcome to my Spotify App <a href='/login'>Login with Spotify</a>"
+    return render_template('index.html')
+
+@app.route('/members')
+def members():
+    members_list = ["Member1", "Member2", "Member3"]
+    return jsonify(members=members_list)
 
 @app.route('/login')
 def login():

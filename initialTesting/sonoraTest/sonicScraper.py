@@ -1,5 +1,5 @@
 import json
-import spotifyEnvironment
+import backend.spotifyEnvironment as spotifyEnvironment
 import spotipy.util as util
 import spotipy
 import requests
