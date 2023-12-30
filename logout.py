@@ -1,6 +1,6 @@
 import spotipy.util as util
-import sonicScraper
-
+import sonoraTest.sonicScraper as sonicScraper
+import requests
 
 
 def logout():
@@ -12,6 +12,13 @@ def logout():
                                     client_secret=sonicScraper.client_secret,
                                     redirect_uri=sonicScraper.redirect_uri,
                                     show_dialog=True)
+    url = 'https://accounts.spotify.com/authorize'
+    url += '?response_type=token'
+    url += '&client_id=' + requests.utils.quote(sonicScraper.client_id)
+    url += '&scope=' + requests.utils.quote(sonicScraper.scope)
+    url += '&redirect_uri=' + requests.utils.quote(sonicScraper.redirect_uri)
+    url += '&state=' + requests.utils.quote(sonicScraper.state)
+
     return token
 
 
