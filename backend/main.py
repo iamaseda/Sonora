@@ -17,7 +17,7 @@ REDIRECT_URI = spotifyEnvironment.redirect_uri
 
 AUTH_URL = 'https://accounts.spotify.com/authorize'
 TOKEN_URL = 'https://accounts.spotify.com/api/token'
-API_BASE_URL = 'https://api.spotify/com/v1/'
+API_BASE_URL = 'https://api.spotify.com/v1/'
 
 
 @app.route('/')
@@ -56,28 +56,43 @@ def callback():
         response = requests.post(TOKEN_URL, data=request_body)
         token_info = response.json()
 
+        if 'error' in token_info:
+            print("Token Retrieval Error:", token_info['error'])
+            # Handle the error (e.g., redirect to login page)
+            return redirect('/login')
+
+        print("\nToken Retrieval Response: ", token_info) 
+
         session['access_token'] = token_info['access_token']
         session['refresh_token'] = token_info['refresh_token']      
         session['expires_at'] = datetime.now().timestamp() + token_info['expires_in']
 
-    return redirect('/playlsits')
+    return redirect('/playlists')
 
 @app.route('/playlists')
 def getPlaylists():
+    print("Get Playlist function started\n")
     if 'access_token' not in session:
         return redirect('/login')
     
     if datetime.now().timestamp() >= session['expires_at']:
+        print("Access Token Expired. Refreshing...")
         return redirect('/refresh-token')
     
     headers = {
         'Authorization' : f"Bearer {session['access_token']}"
     }
 
-    response = request.get(API_BASE_URL + 'me/playlists', headers=headers)
-    playlists = response.json()
+    response = requests.get(API_BASE_URL + 'me/playlists', headers=headers)
     
-    return jsonify(playlists)
+    if response.status_code != 200:
+        print(f"\nFailed to retrieve playlists. Status Code: {response.status_code}\n Status Message:\n{response.text}")
+
+    playlists = response.json()
+    print("Playlists API Response (JSON):", playlists)
+
+    return jsonify(playlists)     
+
 
 @app.route('/refresh-token')
 def refresh_token():
@@ -98,7 +113,7 @@ def refresh_token():
         session['access_token'] = new_token['access_token']
         session['expires_at'] = datetime.now().timestamp() + new_token['expires_in']
 
-        return redirect('/playlsits')
+        return redirect('/playlists')
 
 @app.route('/likedsongs')
 def getLikedSongs(token):
@@ -122,8 +137,9 @@ def getLikedSongs(token):
 
             i += 50
         print("\nSongs finished being parsed\n")
-    with open('songs.json', 'w') as fp:
-        json.dump(songs, fp)
+    # with open('songs.json', 'w') as fp:
+    #     json.dump(songs, fp)
+        return jsonify(songs)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run(debug=True)
