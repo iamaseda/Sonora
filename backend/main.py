@@ -3,13 +3,19 @@ import urllib.parse
 import spotifyEnvironment as spotifyEnvironment
 import spotipy
 import json
+import os, hashlib, re
 
 from datetime import datetime, timedelta
-from flask import Flask, redirect, request, jsonify, session, Blueprint, render_template
+from flask import Flask, redirect, request, jsonify, send_from_directory, session, Blueprint, render_template
+from flask_sqlalchemy import SQLAlchemy
 
 
-app = Flask(__name__)
+
+app = Flask(__name__, static_folder='static', template_folder='templates')
 app.secret_key = '123k48907864g256-2345kn-2345234v5o-234lk5hjl23'
+app.config.from_object('config.Config')
+
+sonos_db = SQLAlchemy(app)
 
 CLIENT_ID = spotifyEnvironment.client_id
 CLIENT_SECRET = spotifyEnvironment.client_secret
@@ -20,14 +26,28 @@ TOKEN_URL = 'https://accounts.spotify.com/api/token'
 API_BASE_URL = 'https://api.spotify.com/v1/'
 
 
+def get_hashed_filename(filename):
+    build_dir = os.path.abspath(os.path.join(app.root_path, '..', 'frontend', 'sonora_client', 'build', 'static'))
+    pattern = re.compile(f"{re.escape(filename)}\\.[a-f0-9]+\\.{filename.split('.')[-1]}")
+    print("Build Directory:", build_dir)
+
+    files = os.listdir(build_dir)
+    for file in files:
+        if pattern.match(file):
+            return file
+
+    return filename
+# Get the absolute path to the 'css' folder within the Flask app directory
+css_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'css')
+@app.route('/css/sonora_styles.css')
+def serve_css(filename):
+    return send_from_directory(css_folder, filename)
+
+
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', get_hashed_filename=get_hashed_filename)
 
-@app.route('/members')
-def members():
-    members_list = ["Member1", "Member2", "Member3"]
-    return jsonify(members=members_list)
 
 @app.route('/login')
 def login():
@@ -72,9 +92,20 @@ def callback():
         session['refresh_token'] = token_info['refresh_token']      
         session['expires_at'] = datetime.now().timestamp() + token_info['expires_in']
 
-    return redirect('/playlists')
+    return render_template('home.html', get_hashed_filename=get_hashed_filename)
 
-@app.route('/playlists')
+@app.route('/home')
+def home():
+    if 'access_token' not in session:
+        return redirect('/login')
+    
+    if datetime.now().timestamp() >= session['expires_at']:
+        print("Access Token Expired. Refreshing...")
+        return redirect('/refresh-token')
+    
+    return render_template('home.html', get_hashed_filename=get_hashed_filename)
+
+@app.route('/my-playlists')
 def getPlaylists():
     print("Get Playlist function started\n")
     if 'access_token' not in session:
@@ -92,11 +123,42 @@ def getPlaylists():
     
     if response.status_code != 200:
         print(f"\nFailed to retrieve playlists. Status Code: {response.status_code}\n Status Message:\n{response.text}")
+        return render_template('query-error.html', get_hashed_filename=get_hashed_filename, status_code=response.status_code,
+                               text=response.text)
+    # TODO: make page for when query errors occur while users are attempting to use the service
 
-    playlists = response.json()
+    playlists = response.json()['items']
     print("Playlists API Response (JSON):", playlists)
 
-    return jsonify(playlists)     
+    return render_template('my-playlists.html', get_hashed_filename=get_hashed_filename, playlists=playlists, totalPlaylists=response.json()['total'])     
+
+# Get images for each playlist
+@app.route('/getPlaylistImage/<playlist_id>')
+def getPlaylistImage(playlist_id):
+    print("Get Playlist Image function started\n")
+    if 'access_token' not in session:
+        return redirect('/login')
+    
+    if datetime.now().timestamp() >= session['expires_at']:
+        print("Access Token Expired. Refreshing...")
+        return redirect('/refresh-token')
+    
+    headers = {
+        'Authorization' : f"Bearer {session['access_token']}"
+    }
+    urlbuild = API_BASE_URL + f'playlists/{playlist_id}/images'
+    print("GET url: ", urlbuild)
+    response = requests.get(urlbuild, headers=headers)
+    if response.status_code != 200:
+        print(f"\nFailed to retrieve playlist image. Status Code: {response.status_code}\n Status Message:\n{response.text}")
+        # return render_template('query-error.html', get_hashed_filename=get_hashed_filename, status_code=cover.status_code,
+                            #    text=cover.text)
+    # TODO: make page for when query errors occur while users are attempting to use the service
+    cover = response.json()[0]['url']
+    print("Cover Url: ", cover)
+    
+    return cover
+    
 
 
 @app.route('/refresh-token')
@@ -118,7 +180,7 @@ def refresh_token():
         session['access_token'] = new_token['access_token']
         session['expires_at'] = datetime.now().timestamp() + new_token['expires_in']
 
-        return redirect('/playlists')
+        return redirect('/my-playlists')
 
 @app.route('/likedsongs')
 def getLikedSongs(token):

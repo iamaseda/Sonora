@@ -4,11 +4,18 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sonora</title>
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/sonora_styles.css' + get_hashed_filename('css/main.css')) }}"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sonora_styles.css') }}">
+    <title>Sonora - React Web Version</title>
 </head>
 <body>
-    <div>
-        <p>Welcome to Sonora!!</p>
+    <header class="maintopbar">Sonora</header>
+    <div id="root"></div>
+    <!-- <script src="{{ url_for('static', filename='js/sonora_javas.js' + get_hashed_filename('js/main.js')) }}"></script> -->
+    <script src="{{ url_for('static', filename='js/sonora_javas.js') }}"></script>
+    <div class="index">
+        <br>
+        <p>Welcome to Sonora!! In Collaboration with Spotify.</p>
         <p> <a href='/login'>Login with Spotify</a></p>
     </div>
 </body>

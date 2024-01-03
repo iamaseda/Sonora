@@ -1,0 +1,293 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 100%;
+    background-color: #000000;
+    color: #ffffff;
+    text-align: left;
+}
+
+.window {
+flex: 1; /* This makes the window div grow to fill the available space */
+}
+/* Upper title bar */
+.maintopbar {
+    text-align: center;
+    border: 3px solid #131313;
+    background-color: #0f0f0f;
+    color: #ffffff;
+    text-transform: uppercase;
+    padding: 2.5%;
+    font-size: 2.5vw;
+    border-radius: 10px;
+    text-decoration: none;
+}
+/* .maintopbar:hover {
+    color: #1db954;
+} */
+.head {
+    display: block;
+    padding-bottom: 3px;
+}
+.index {
+    text-align: center;
+    vertical-align: middle;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 70vh;
+}
+.left {
+    float: left;
+    width: 47%;
+    resize: horizontal;
+    padding-right: 1%;
+}
+.right {
+    float: left;
+    width: 47%;
+    resize: horizontal;
+    padding-right: 1%;
+}
+.playleft {
+    float: left;
+    width: 20%;
+    resize: horizontal;
+    padding: 1%;
+    display: block;
+    background-color: #0f0f0f;
+    border-radius: 10px;
+    margin-right: 10px;
+}
+.playlist_field {
+    background: linear-gradient(0deg, #0f0f0f 38%, #3c3c3c 48%, #ef770f 80%);
+    width: 75%; 
+    resize: horizontal;
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
+    gap: 1.5%;
+    padding: 1.5%;
+    border-radius: 10px;
+    height: auto;
+}
+.playcard {
+    box-sizing: border-box;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+.playcard a {
+    color: aliceblue;
+    text-decoration: none;
+}
+.playcard a:hover {
+    color: #115e2c;
+}
+.playcard p a {
+    color: aliceblue;
+    text-decoration: underline;
+}
+.playcard p a:hover {
+    color: #147536;
+}
+.playcover {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.button1 {
+    text-align: center;
+    border: 3px solid #131313;
+    background-color: #0f0f0f;
+    color: #ffffff;
+    padding: 2.5%;
+    text-decoration: none;
+    display: inline-block;
+    clear: both;
+}
+.button1:hover {
+    text-align: center;
+    border: 3px solid #131313;
+    background-color: #1db954;
+    color: #ffffff;
+    padding: 2.5%;
+    text-decoration: none;
+}
+
+/* Navbar */
+.topnav {
+    overflow: hidden;
+    /* background-color: #333; */
+  }
+  /* Navbar links */
+.topnav a {
+    float: left;
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+  
+/* Links - change color on hover */
+.topnav a:hover {
+background-color: #ddd;
+color: black;
+}
+
+.sidebar {
+flex: 1 1 0;
+max-width: 200px;
+padding: 2rem 1rem;
+background-color: #2e3047;
+position: fixed;
+top: 0;
+left: -300px;
+height: 100vh;
+width: 100%;
+transition: 0.2s linear;
+}
+
+.sidebar h3 {
+color: #707793;
+font-size: 0.75rem;
+text-transform: uppercase;
+margin-bottom: 0.5em;
+}
+
+.sidebar menu {
+margin: 0 -1rem;
+}
+
+.sidebar .menu .menu-item {
+display: block;
+padding: 1em;
+color: #FFF;
+text-decoration: none;
+transition: 0.2s linear;
+}
+
+.sidebar .menu .menu-item:hover,
+.sidebar .menu .menu-item-is-active {
+display: block;
+padding: 1em;
+color: #ef770f;
+border-right: 5px solid #ef770f;
+/* Nice light green color: #3bba9c */
+}
+
+.menu-toggle {
+/* display: none; */
+position: fixed;
+top: 1.5rem;
+right: 2rem;
+width: 60px;
+height: 60px;
+border-radius: 99px;
+background-color: #2e3047;
+cursor: pointer;
+}
+
+.menu-toggle:hover {
+    background-color: #ef770f;
+}
+
+@media (max-width: 1024px) {
+    .sidebar {
+        max-width: 100px;
+    }
+}
+
+@media (min-width: 1025px) {
+.menu-toggle {
+    display: block;
+}
+.content {
+    padding-top: 8rem;
+}
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -335px;
+    height: 100vh;
+    width: 100%;
+    max-width: 200px;
+    transition: 0.2s linear;
+} 
+
+.sidebar.is-active {
+    left: 0;
+}
+}
+
+@media (max-width: 768px) {
+.menu-toggle {
+    display: block;
+}
+.content {
+    padding-top: 8rem;
+}
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -335px;
+    height: 100vh;
+    width: 100%;
+    max-width: 300px;
+    transition: 0.2s linear;
+} 
+
+.sidebar.is-active {
+    left: 0;
+}
+}
+
+.hamburger {
+position: relative;
+top: calc(50% - 2px);
+left: 50%;
+transform: translate(-50%, -50%);
+width: 32px;
+}
+
+.hamburger > span,
+.hamburger > span::before,
+.hamburger > span::after {
+display: block;
+position: absolute;
+width: 100%;
+height: 4px;
+border-radius: 99px;
+background-color: #FFF;
+transition-duration: .25s;
+}
+
+.hamburger > span::before {
+content: '';
+top: -8px;
+}
+.hamburger > span::after {
+content: '';
+top: 8px;
+}
+.menu-toggle.is-active .hamburger > span {
+transform: rotate(45deg);
+}
+.menu-toggle.is-active .hamburger > span::before {
+top: 0;
+transform: rotate(0deg);
+}
+/* .menu-toggle.is-active .hamburger:hover > span::before {
+    background-color: #ef770f;
+} */ /* This makes one of the lines on the X change color on hover */
+.menu-toggle.is-active .hamburger > span::after {
+top: 0;
+transform: rotate(90deg);
+}
+/* .menu-toggle.is-active .hamburger:hover > span::after {
+    background-color: #ef770f;
+} */ /* This makes the other line on the X change color on hover */

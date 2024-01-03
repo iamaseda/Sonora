@@ -11,6 +11,9 @@
 # production
 /build
 
+# configuration
+/config.py
+
 # misc
 .DS_Store
 .env.local
