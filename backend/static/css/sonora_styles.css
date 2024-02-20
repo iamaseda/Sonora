@@ -2,7 +2,7 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 100%;
     background-color: #000000;
-    color: #ffffff;
+    color: #f1f1f1;
     text-align: left;
 }
 
@@ -37,17 +37,45 @@ flex: 1; /* This makes the window div grow to fill the available space */
     align-items: center;
     height: 70vh;
 }
+.welcome {
+    display: inline-block;
+}
+.profilecrop {
+    border-radius: 80%;
+    vertical-align: middle;
+    text-align: start;
+    /* box-sizing: border-box;
+    overflow: clip;
+    overflow-clip-margin: content-box; */
+    /* object-fit: cover; */
+}
+.profilecropsquare {
+    border-radius: 50%;
+    vertical-align: middle;
+    box-sizing: border-box;
+    overflow: clip;
+    overflow-clip-margin: content-box;
+    /* object-fit: cover; */
+}
 .left {
-    float: left;
-    width: 47%;
+    width: 45%;
     resize: horizontal;
-    padding-right: 1%;
+    display: block;
+    border-radius: 10px;
+    margin-right: 10px;
+    background: linear-gradient(270deg, #3c3c3c 0%, #0f0f0f 80%);
+    padding: 1%;
+    height: max-content;
 }
 .right {
-    float: left;
+    /* float: left; */
     width: 47%;
     resize: horizontal;
-    padding-right: 1%;
+    padding: 1%;
+    flex: 1;
+    height: auto;
+    background: linear-gradient(90deg, #272727 0%, #ef780f00 80%);
+    border-radius: 10px;
 }
 .playleft {
     float: left;
@@ -97,16 +125,56 @@ flex: 1; /* This makes the window div grow to fill the available space */
     width: 100%;
     height: auto;
     display: block;
+} 
+.likedsongs_field {
+    background: linear-gradient(0deg, #0f0f0f 38%, #3c3c3c 48%, #ef770f 80%);
+    width: 75%; 
+    resize: horizontal;
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
+    padding: 1.5%;
+    border-radius: 10px;
+    height: auto;
+    text-wrap: wrap;
 }
+.likedbox {
+    text-decoration: none;
 
+}
+.likedbox a {
+    color: aliceblue;
+    text-decoration: none;
+}
+.likedbox a:hover {
+    color: #115e2c;
+}
+.likedbox p a {
+    color: aliceblue;
+    text-decoration: underline;
+}
+.likedbox p a:hover {
+    color: #147536;
+}
+.likedcover {
+    width: 100%;
+    height: auto;
+    display: block;
+    padding-bottom: 0;
+    margin-bottom: 0;
+} 
+.likedartist {
+    padding: 0;
+    margin: 0;
+} 
 .button1 {
     text-align: center;
     border: 3px solid #131313;
     background-color: #0f0f0f;
     color: #ffffff;
-    padding: 2.5%;
+    padding-inline: 1.5%;
+    padding-block: -1.5%;
     text-decoration: none;
-    display: inline-block;
     clear: both;
 }
 .button1:hover {
@@ -114,7 +182,8 @@ flex: 1; /* This makes the window div grow to fill the available space */
     border: 3px solid #131313;
     background-color: #1db954;
     color: #ffffff;
-    padding: 2.5%;
+    padding-inline: 0%;
+    padding-block: 0%;
     text-decoration: none;
 }
 
