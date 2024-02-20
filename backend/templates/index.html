@@ -6,17 +6,105 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/sonora_styles.css' + get_hashed_filename('css/main.css')) }}"> -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sonora_styles.css') }}">
-    <title>Sonora - React Web Version</title>
+    <link rel="shortcut icon" href="#" />
+    <title>Sonora - Home</title>
 </head>
 <body>
-    <header class="maintopbar">Sonora</header>
-    <div id="root"></div>
-    <!-- <script src="{{ url_for('static', filename='js/sonora_javas.js' + get_hashed_filename('js/main.js')) }}"></script> -->
-    <script src="{{ url_for('static', filename='js/sonora_javas.js') }}"></script>
-    <div class="index">
-        <br>
-        <p>Welcome to Sonora!! In Collaboration with Spotify.</p>
-        <p> <a href='/login'>Login with Spotify</a></p>
+    <div class="head">
+        <!-- <style>
+            .maintopbar {
+                background-image: url("{{ profile_info.images[0]['url'] }}");
+            }
+        </style> -->
+        {% if profile %}
+        <a href="/home" style="text-decoration: none;">
+            <header class="maintopbar">Sonora</header>
+        </a>
+        <script>
+            console.log("background? ")
+            console.log('{{ profile_info.images[0]["url"] }}')
+        </script>
+        {% else %}
+        <a href="/home" style="text-decoration: none;">
+            <header class="maintopbar">Sonora</header>
+        </a>
+        {% endif %}
     </div>
+    <aside class="sidebar">
+        <h3>Menu</h3>
+      <nav class="menu">
+        <a href="/home" class="menu-item-is-active">Home</a>
+        <a href="/my-playlists" class="menu-item">My Playlists</a>
+      </nav>
+    </aside>
+    <div class="menu-toggle">
+        <div class="hamburger">
+          <span></span>
+        </div>
+      </div>
+      <br>
+    <div class="window">
+        <div id="root"></div>
+        <!-- <script src="{{ url_for('static', filename='js/sonora_javas.js' + get_hashed_filename('js/main.js')) }}"></script> -->
+        <script src="{{ url_for('static', filename='js/sonora_javas.js') }}"></script>
+        <div style="display: flex;">
+            <div class="left">
+                <div class="welcome">
+                    <h2 style="display: inline;">Welcome, {{ profile_info.display_name }}!  </h2>
+                    <!-- {% if profile_info.images[0]['height'] < profile_info.images[0]['width'] %}
+                    <img class="profilecrop" style="min-height: '{{ profile_info.images[0]['width']}}'px;" src="{{ profile_info.images[0]['url']}}">
+                    {% elif profile_info.images[0]['height'] > profile_info.images[0]['width'] %}
+                    <img class="profilecrop" style="min-width: '{{ profile_info.images[0]['height']}}'px;" src="{{ profile_info.images[0]['url']}}">
+                    {% else %}
+                    <img class="profilecropsquare" src="{{ profile_info.images[0]['url']}}">
+                    {% endif %} -->
+                </div>
+                    <br>
+                    <br>
+                    <div>
+                        <p>Click Below To View Your Public Profile: 
+                            <ul><a href="{{ profile_info.external_urls['spotify']}}" style="text-decoration: none; color: aliceblue;">{{ profile_info.display_name }}</a></ul>
+                        </p>
+                        <p>Spotify ID: 
+                            <ul>{{ profile_info.id }}</ul>
+                        </p>
+                        <p>Number Of Followers: 
+                            <ul>{{ profile_info.followers['total'] }}</ul>
+                        </p>
+                        <p>Number Of Playlists: 
+                            <ul>{{ totalPlaylists }}</ul>
+                        </p>
+                        <p>
+                            Your Profile Picture:
+                            <ul><img style="border: 50px;" src="{{ profile_info.images[0]['url']}}"></ul>
+                        </p>
+                        <!-- <p>Your Account Type: 
+                            <ul>{{ profile_info.product }}</ul>
+                        </p> -->
+                    </div>
+            </div>
+            <div class="right">
+                <div>
+                    <a href="/likedsongs">
+                        <h4 class="button1">Liked Songs</h4>
+                    </a>
+                </div>
+                <div>
+                    <a href="/ls-genres">
+                        <h4 class="button1">genres</h4>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const menu_toggle = document.querySelector('.menu-toggle')
+        const sidebar = document.querySelector('.sidebar')
+    
+        menu_toggle.addEventListener('click', () => {
+          menu_toggle.classList.toggle('is-active');
+          sidebar.classList.toggle('is-active');
+        })
+      </script>
 </body>
 </html>

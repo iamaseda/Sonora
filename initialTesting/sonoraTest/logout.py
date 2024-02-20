@@ -1,5 +1,5 @@
 import spotipy.util as util
-import sonoraTest.sonicScraper as sonicScraper
+import sonicScraper as sonicScraper
 import requests
 
 

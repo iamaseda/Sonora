@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/sonora_styles.css' + get_hashed_filename('css/main.css')) }}"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sonora_styles.css') }}">
+    <title>Sonora - Home</title>
+</head>
+<body class="app">
+    <div class="head" >
+        <a href="/home" style="text-decoration: none;">
+            <header class="maintopbar">Sonora</header>
+        </a>
+    </div>
+    <br>
+    <aside class="sidebar">
+        <h3>Menu</h3>
+      <nav class="menu">
+        <a href="/home" class="menu-item-is-active">Home</a>
+        <a href="/my-playlists" class="menu-item">My Playlists</a>
+      </nav>
+    </aside>
+    <div class="menu-toggle">
+        <div class="hamburger">
+          <span></span>
+        </div>
+    </div>
+    <div class="window">
+        <div id="root"></div>
+        <!-- <script src="{{ url_for('static', filename='js/sonora_javas.js' + get_hashed_filename('js/main.js')) }}"></script> -->
+        <script src="{{ url_for('static', filename='js/sonora_javas.js') }}"></script>
+        <div style="clear: both; display: flex;">
+            <div class="playleft">
+                <div class="">
+                    <h2>My Liked Songs</h2>
+                </div>
+                
+            </div>
+            <div class="likedsongs_field">
+                <!-- <p>{{ songs }}</p> -->
+                {% if songs %}
+                    {% for index in songs %}
+
+                        {% for song in songs[index]['items'] %}
+                            <!-- <p>{{ song.track.id }}</p> -->
+                        <div class="likedbox">
+                            {% if song.track.album.images[0].url %}
+                            <a href="{{ song['track']['external_urls']['spotify'] }}"><img id="likedcover_{{ song['track']['id'] }}" class="likedcover"></a><br>
+                            <script>console.log("Song ID: ", "{{ song['track']['album']['images'][0]['url'] }}")
+                            getTrackImage('{{ song.track.id }}')</script>
+                            {% else %}
+                            <a href="{{ song['track']['external_urls']['spotify'] }}"><img id="likedcover_{{ song['track']['id'] }}" class="likedcover"></a><br>
+                            {% endif %}
+
+                            <a href="{{ song['track']['external_urls']['spotify'] }}">
+                                <h3>{{ song['track']['name'] }}</h3>
+                            </a>
+                            <a href="{{ song['track']['artists'][0]['name'] }}">
+                                <p>{{ song.track.artists[0].name }}</p>
+                            </a>
+                            
+                        </div>
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}                
+            </div>
+        </div>
+    </div>
+    <script>
+        const menu_toggle = document.querySelector('.menu-toggle')
+        const sidebar = document.querySelector('.sidebar')
+    
+        menu_toggle.addEventListener('click', () => {
+          menu_toggle.classList.toggle('is-active');
+          sidebar.classList.toggle('is-active');
+        })
+      </script>
+</body>
+</html>

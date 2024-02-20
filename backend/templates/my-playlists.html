@@ -10,9 +10,34 @@
 </head>
 <body class="app">
     <div class="head" >
+        
+        <script>
+            getProfile().then(() => {
+                // This block runs after the fetch operation is complete
+                console.log('Image URL: {{ profile_info.images[0]["url"] }}'); // Check in the console if profile_info is available
+                const maintopbar = document.querySelector('.maintopbar');
+                if (profile_info && profile_info.images && profile_info.images.length > 0) {
+                    maintopbar.style.backgroundImage = `url("${profile_info.images[0]['url']}")`;
+                }
+            }).catch(error => {
+                console.error(`Error while retrieving profile data: ${error}`);
+            });
+        </script>
+        {% if profile %}
+        <!-- <style>
+            .maintopbar {
+                background-image: url("{{ profile_info.images[0]['url'] }}");
+            }
+        </style> -->
         <a href="/home" style="text-decoration: none;">
             <header class="maintopbar">Sonora</header>
         </a>
+        
+        {% else %}
+        <a href="/home" style="text-decoration: none;">
+            <header class="maintopbar">Sonora</header>
+        </a>
+        {% endif %}
     </div>
     <br>
     <aside class="sidebar">
