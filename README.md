@@ -1,3 +1,5 @@
+Project currently on pause as I find an appropriate AI for music analysis. <br>
+
 pipenv
 python3
 Flask
