@@ -1,4 +1,4 @@
-Project currently on pause as I find an appropriate AI for music analysis. <br>
+Project currently on pause as I find an appropriate method for accurate music analysis that supports large batch analyses. <br>
 
 pipenv
 python3
