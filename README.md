@@ -8,7 +8,7 @@ Project currently on pause.
 ## Setting Up the Project
 
 1. Clone the repository.
-2. Create a `.env` file in the root directory of the project and add your environment variables. You can use the provided `.env.example` as a template. Please note: **None of these secrets, URLs, URIs, IDs, and tokens are valid, and they should not be used for your project**. There are environment variables for Cyanite in the example template. In the case that Cyanite is sufficient for your purposes, you will have to go to that service to obtain the secret, access token, and to obtain a webhook URL if you do not already have one.
+2. Create a `.env` file in the root directory of the project and add your environment variables. You can use the provided `.env.example` as a template. Please note: **None of these secrets, URLs, URIs, IDs, and tokens are valid, and they should not be used for your project**. There are environment variables for Cyanite in the example template. In the case that Cyanite is sufficient for your purposes, you will have to go to that service to obtain the secret, access token, and to obtain a webhook URL if you do not already have one. Otherwise, you can delete or disregard those environment variables without worry.
 
 ```sh
 cp .env.example .env
