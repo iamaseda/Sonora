@@ -5,9 +5,32 @@ Sonora is an application that leverages Spotify's API to access a Spotify user's
 Project currently on pause.
 * Searching for an appropriate method for accurate music analysis that supports large batch analyses. If you are familiar with a service or algorithm that does this well, such as Cyanite and other such services, please feel free to contact me at bokyere887@gmail.com
 
+## Setting Up the Project
+
+1. Clone the repository.
+2. Create a `.env` file in the root directory of the project and add your environment variables. You can use the provided `.env.example` as a template. Please note: **None of these secrets, URLs, URIs, IDs, and tokens are valid, and they should not be used for your project**. There are environment variables for Cyanite in the example template. In the case that Cyanite is sufficient for your purposes, you will have to go to that service to obtain the secret, access token, and to obtain a webhook URL if you do not already have one.
+
+```sh
+cp .env.example .env
+```
+
+### Setting Up Project Node Dependencies
+
+1. Navigate using `cd` in your terminal to the project's *root directory*.
+2. Run `npm install` to install all dependencies listed in the *package.json* file.
+  + If you would like to replicate the exact versions in this project using the *package-lock.json* file, run `npm ci`.
+
+### Setting Up Project Python Dependencies
+
+1. Navigate using `cd` in your terminal to the root directory, in which the *venv* file is located.
+2. From there, activate the virtual environment:
+  + On Windows: .\venv\Scripts\activate
+  + On macOS/Linux: source venv/bin/activate
+3. Once the virtual environment has been activated,  run `pip install -r requirements.txt`.
+4. Congratulations! You can now run the project using  `python app.py`, `python3 app.py`, `flask run`, etc. One of first two should be sufficient.
 
 ## Resources and Miscellaneous Info
-** **Disregard the information below!** 🚨
+** **Please disregard the information below!** 🚨
 
 pipenv
 pipenv
