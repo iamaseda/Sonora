@@ -1,5 +1,15 @@
-Project currently on pause as I find an appropriate method for accurate music analysis that supports large batch analyses. <br>
+## Sonora
+Sonora is an application that leverages Spotify's API to access a Spotify user's liked songs with the goal of sorting the liked songs into playlists by genre.
 
+## <u>Current Progress</u>
+Project currently on pause.
+* Searching for an appropriate method for accurate music analysis that supports large batch analyses. If you are familiar with a service or algorithm that does this well, such as Cyanite and other such services, please feel free to contact me at bokyere887@gmail.com
+
+
+### Resources and Miscellaneous Info
+<span style="color: red;">** Disregard the information below!</span>
+
+pipenv
 pipenv
 python3
 Flask
