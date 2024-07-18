@@ -7,7 +7,7 @@ Project currently on pause.
 
 
 ## Resources and Miscellaneous Info
-<span style="color: red;">** Disregard the information below!</span>
+** **Disregard the information below!** 🚨
 
 pipenv
 pipenv
