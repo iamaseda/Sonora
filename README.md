@@ -24,8 +24,8 @@ cp .env.example .env
 
 1. Navigate using `cd` in your terminal to the root directory, in which the *venv* file is located.
 2. From there, activate the virtual environment:
-  + On Windows: .\venv\Scripts\activate
-  + On macOS/Linux: source venv/bin/activate
+  + On Windows: ```.\venv\Scripts\activate```
+  + On macOS/Linux: ```source venv/bin/activate```
 3. Once the virtual environment has been activated,  run `pip install -r requirements.txt`.
 4. Congratulations! You can now run the project using  `python app.py`, `python3 app.py`, `flask run`, etc. One of first two should be sufficient.
 
