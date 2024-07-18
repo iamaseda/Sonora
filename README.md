@@ -1,4 +1,4 @@
-## Sonora
+# Sonora
 Sonora is an application that leverages Spotify's API to access a Spotify user's liked songs with the goal of sorting the liked songs into playlists by genre.
 
 ## <u>Current Progress</u>
