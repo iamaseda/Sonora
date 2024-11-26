@@ -3,7 +3,6 @@ Sonora is an application that leverages Spotify's API to access a Spotify user's
 
 ## <u>Current Progress</u>
 Project currently on pause.
-* Searching for an appropriate method for accurate music analysis that supports large batch analyses. If you are familiar with a service or algorithm that does this well, such as Cyanite and other such services, please feel free to contact me at bokyere887@gmail.com
 
 ## Setting Up the Project
 
